@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthTrack Pro - {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1><span class="highlight">🩺 Borafya</span> Pro</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('health_tracker') }}">Health Tracker</a></li>
+                    <li><a href="{{ url_for('treatment_guidelines') }}">Treatment Guidelines</a></li>
+                    <li><a href="{{ url_for('health_goals_route') }}">Personal Health Goals</a></li>
+                    <li><a href="{{ url_for('health_game') }}">Health Game</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="flash">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

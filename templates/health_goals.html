@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Personal Health Goals{% endblock %}
+{% block content %}
+    <h1>Personal Health Goals</h1>
+    <form method="POST" action="{{ url_for('health_goals_route') }}">
+        <label for="goal">Health Goal:</label>
+        <input type="text" id="goal" name="goal" required>
+        
+        <label for="target_date">Target Date:</label>
+        <input type="date" id="target_date" name="target_date" required>
+        
+        <input type="submit" value="Add Health Goal" class="btn">
+    </form>
+
+    <h2>Your Health Goals</h2>
+    <table>
+        <tr>
+            <th>Date Set</th>
+            <th>Goal</th>
+            <th>Target Date</th>
+            <th>Status</th>
+        </tr>
+        {% for goal in health_goals %}
+        <tr>
+            <td>{{ goal.date }}</td>
+            <td>{{ goal.goal }}</td>
+            <td>{{ goal.target_date }}</td>
+            <td>{{ goal.status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -1,0 +1,117 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(90deg, #FFFFFF 0.5%, #87CEFA 99.5%, #FFFFFF 0%); /* Light shade of white background */
+    color: #070505; /* Text color */
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+    padding: 20px;
+}
+
+header {
+    background: linear-gradient(90deg, #FFFFFF 0%, #87CEFA 10.5%, #FFFFFF 36.5%); /* Brighter blue */
+    color: #000000; /* Black text color */
+    padding: 10px 20px; /* Reduced padding for a smaller header */
+    min-height: 50px; /* Reduced height for a smaller header */
+    border-bottom: #ffffff 3px solid;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+header a {
+    color: #000000; /* Black text color */
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 14px; /* Slightly smaller font size */
+}
+
+header ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+}
+
+header li {
+    display: inline;
+    padding: 0 10px; /* Reduced padding for more compact layout */
+}
+
+header #branding {
+    display: flex;
+    align-items: center;
+}
+
+header #branding h1 {
+    margin: 0;
+    font-size: 18px; /* Reduced font size for smaller header */
+}
+
+header nav {
+    display: flex;
+    align-items: center;
+}
+
+header .highlight, header .current a {
+    font-weight: bold;
+}
+
+header a:hover {
+    font-weight: bold;
+}
+
+.btn {
+    display: inline-block;
+    background: #1e90ff;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #3a9bff;
+}
+
+form {
+    margin-top: 20px;
+}
+
+input[type="text"], input[type="number"], input[type="date"], input[type="email"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #1e90ff;
+    color: white;
+}
+
+.flash {
+    padding: 10px;
+    margin: 10px 0;
+    background: #3a9bff;
+    color: white;
+    border-radius: 5px;
+}

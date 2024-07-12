@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Health Game{% endblock %}
+{% block content %}
+    <h1>Health Trivia Game</h1>
+    <p>Test your health knowledge with this trivia game!</p>
+    
+    <form id="quiz-form">
+        {% for question in questions %}
+        <div class="question">
+            <h3>{{ question.question }}</h3>
+            {% for option in question.options %}
+            <label>
+                <input type="radio" name="q{{ loop.index }}" value="{{ option }}">
+                {{ option }}
+            </label>
+            {% endfor %}
+        </div>
+        {% endfor %}
+        <input type="submit" value="Submit Answers" class="btn">
+    </form>
+
+    <div id="results" style="display: none;">
+        <h2>Your Score: <span id="score"></span></h2>
+    </div>
+
+    <script>
+        document.getElementById('quiz-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let score = 0;
+            const answers = {{ questions|tojson }};
+            answers.forEach((q, i) => {
+                const selected = document.querySelector(`input[name="q${i+1}"]:checked`);
+                if (selected && selected.value === q.answer) {
+                    score++;
+                }
+            });
+            document.getElementById('score').textContent = `${score} out of ${answers.length}`;
+            document.getElementById('results').style.display = 'block';
+        });
+    </script>
+{% endblock %}
