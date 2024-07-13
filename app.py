@@ -3,7 +3,6 @@ import os
 from flask import Flask, flash, redirect, render_template, jsonify, request, url_for
 from dotenv import load_dotenv
 import google.generativeai as genai
-from mailjet_rest import Client
 import random
 
 # Load environment variables from .env file
@@ -61,63 +60,9 @@ def health_goals_route():
             'status': 'In Progress'
         }
         health_goals.append(new_goal)
-        
-        # Send confirmation email
-        user_email = request.form['email']
-        print(f"Attempting to send email to: {user_email}")
-        try:
-            send_confirmation_email(user_email, new_goal)
-            flash('Health goal added successfully and confirmation email sent!', 'success')
-        except Exception as e:
-            print(f"Error sending email: {str(e)}")
-            flash('Health goal added successfully, but there was an error sending the confirmation email.', 'warning')
-        
+        flash('Health goal added successfully!', 'success')
         return redirect(url_for('health_goals_route'))
     return render_template('health_goals.html', health_goals=health_goals)
-
-def send_confirmation_email(to_email, goal):
-    api_key = os.getenv('MAILJET_API_KEY')
-    api_secret = os.getenv('MAILJET_API_SECRET')
-    
-    if not api_key or not api_secret:
-        raise ValueError("Mailjet API key or secret is not set")
-
-    mailjet = Client(auth=(api_key, api_secret), version='v3.1')
-    data = {
-      'Messages': [
-        {
-          "From": {
-            "Email": "wafulasheila26@gmail.com",
-            "Name": "Health Tracking App"
-          },
-          "To": [
-            {
-              "Email": to_email,
-              "Name": "User"
-            }
-          ],
-          "Subject": "New Health Goal Confirmation",
-          "HTMLPart": f"""
-            <p>Dear User,</p>
-            <p>Your new health goal has been set successfully:</p>
-            <p>Goal: {goal['goal']}</p>
-            <p>Target Date: {goal['target_date']}</p>
-            <p>Good luck on achieving your goal!</p>
-            <p>Best regards,<br>Your Health Tracking App</p>
-          """
-        }
-      ]
-    }
-    
-    try:
-        result = mailjet.send.create(data=data)
-        if result.status_code == 200:
-            print(f"Email sent successfully to {to_email}. Status code: {result.status_code}")
-        else:
-            print(f"Failed to send email. Status code: {result.status_code}")
-            print(result.json())
-    except Exception as e:
-        print(f"Failed to send email. Error: {str(e)}")
 
 @app.route('/health_game')
 def health_game():
@@ -142,6 +87,10 @@ def get_question():
     question = random.choice(questions)
     return jsonify(question)
 
+
+@app.route('/record')
+def records():
+    return render_template('records.html')
 # If running the app directly with Gunicorn, the `__name__` will be `"__main__"`
 if __name__ == '__main__':
     # For production, use Gunicorn to serve the app
