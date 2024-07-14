@@ -21,23 +21,23 @@
         <input type="submit" value="Save Health Data" class="btn">
     </form>
 
-        <h2>Recent Entries</h2>
+    <h2>Health Data Log</h2>
     <table>
         <tr>
             <th>Date</th>
-            <th>Weight</th>
-            <th>Sleep</th>
-            <th>Water</th>
-            <th>Exercise</th>
+            <th>Weight (kg)</th>
+            <th>Sleep (hours)</th>
+            <th>Water (glasses)</th>
+            <th>Exercise (minutes)</th>
         </tr>
         {% for entry in health_data %}
         <tr>
-            <td>{{ entry['date'] }}</td>
-            <td>{{ entry['weight'] }}</td>
-            <td>{{ entry['sleep'] }}</td>
-            <td>{{ entry['water'] }}</td>
-            <td>{{ entry['exercise'] }}</td>
+            <td>{{ entry.date }}</td>
+            <td>{{ entry.weight }}</td>
+            <td>{{ entry.sleep }}</td>
+            <td>{{ entry.water }}</td>
+            <td>{{ entry.exercise }}</td>
         </tr>
-        {% endfor %
+        {% endfor %}
     </table>
 {% endblock %}
