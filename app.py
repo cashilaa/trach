@@ -46,7 +46,14 @@ def treatment_guidelines():
         condition = request.form['condition']
         prompt = f"Provide a brief treatment guideline for {condition}. Format the response with clear headings and bullet points. Keep it concise and general."
         response = model.generate_content(prompt)
-        guideline = response.text.replace('*', '•').replace('**', '')  
+        guideline = response.text
+        
+        # Convert bullet points to HTML lists
+        guideline = guideline.replace('••', '<h3>')
+        guideline = guideline.replace('•• ', '</h3><ul><li>')
+        guideline = guideline.replace('• ', '</li><li>')
+        guideline = guideline.replace('\n', '</li></ul>')
+        
     return render_template('treatment_guidelines.html', guideline=guideline)
 
 @app.route('/health_goals', methods=['GET', 'POST'])
