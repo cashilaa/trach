@@ -44,9 +44,9 @@ def treatment_guidelines():
     guideline = ""
     if request.method == 'POST':
         condition = request.form['condition']
-        prompt = f"Provide a brief treatment guideline for {condition}. Keep it concise and general."
+        prompt = f"Provide a brief treatment guideline for {condition}. Format the response with clear headings and bullet points. Keep it concise and general."
         response = model.generate_content(prompt)
-        guideline = response.text
+        guideline = response.text.replace('*', '•').replace('**', '')  
     return render_template('treatment_guidelines.html', guideline=guideline)
 
 @app.route('/health_goals', methods=['GET', 'POST'])
