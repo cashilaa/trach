@@ -70,7 +70,7 @@ header a:hover {
 
 .btn {
     display: inline-block;
-    background: #1e90ff;
+    background: #87CEFA;
     color: #ffffff;
     padding: 10px 20px;
     border: none;
@@ -104,7 +104,7 @@ table, th, td {
 }
 
 th {
-    background-color: #1e90ff;
+    background-color: #87CEFA;
     color: white;
 }
 
