@@ -7,9 +7,10 @@
         <input type="text" id="condition" name="condition" required>
         <input type="submit" value="Get Guidelines" class="btn">
     </form>
-
     {% if guideline %}
     <h2>Guidelines:</h2>
-    <p>{{ guideline }}</p>
+    <div class="guideline-content">
+        {{ guideline | safe }}
+    </div>
     {% endif %}
 {% endblock %}
