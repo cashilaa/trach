@@ -4,6 +4,7 @@ from flask import Flask, flash, redirect, render_template, jsonify, request, url
 from dotenv import load_dotenv
 import google.generativeai as genai
 import random
+import sqlite3
 
 # Load environment variables from .env file
 load_dotenv()
@@ -16,9 +17,25 @@ app.secret_key = os.urandom(24)  # Generate a random secret key
 genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
 model = genai.GenerativeModel('gemini-pro')
 
-# Mock data storage (replace with a database in a real application)
-health_data = []
-health_goals = []  # Initialize as an empty list
+def init_db():
+    conn = sqlite3.connect('health_app.db')
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS health_data
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  date TEXT, weight TEXT, sleep TEXT, water TEXT, exercise TEXT)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS health_goals
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  date TEXT, goal TEXT, target_date TEXT, status TEXT)''')
+    conn.commit()
+    conn.close()
+
+# Initialize the database
+init_db()
+
+def get_db_connection():
+    conn = sqlite3.connect('health_app.db')
+    conn.row_factory = sqlite3.Row
+    return conn
 
 @app.route('/')
 def home():
@@ -27,16 +44,18 @@ def home():
 @app.route('/health_tracker', methods=['GET', 'POST'])
 def health_tracker():
     if request.method == 'POST':
-        new_entry = {
-            'date': request.form['date'],
-            'weight': request.form['weight'],
-            'sleep': request.form['sleep'],
-            'water': request.form['water'],
-            'exercise': request.form['exercise']
-        }
-        health_data.append(new_entry)
+        conn = get_db_connection()
+        conn.execute("INSERT INTO health_data (date, weight, sleep, water, exercise) VALUES (?, ?, ?, ?, ?)",
+                     (request.form['date'], request.form['weight'], request.form['sleep'],
+                      request.form['water'], request.form['exercise']))
+        conn.commit()
+        conn.close()
         flash('Health data saved successfully!', 'success')
         return redirect(url_for('health_tracker'))
+    
+    conn = get_db_connection()
+    health_data = conn.execute("SELECT * FROM health_data ORDER BY date DESC").fetchall()
+    conn.close()
     return render_template('health_tracker.html', health_data=health_data)
 
 @app.route('/treatment_guidelines', methods=['GET', 'POST'])
@@ -58,17 +77,19 @@ def treatment_guidelines():
 
 @app.route('/health_goals', methods=['GET', 'POST'])
 def health_goals_route():
-    global health_goals
     if request.method == 'POST':
-        new_goal = {
-            'date': date.today().strftime("%Y-%m-%d"),
-            'goal': request.form['goal'],
-            'target_date': request.form['target_date'],
-            'status': 'In Progress'
-        }
-        health_goals.append(new_goal)
+        conn = get_db_connection()
+        conn.execute("INSERT INTO health_goals (date, goal, target_date, status) VALUES (?, ?, ?, ?)",
+                     (date.today().strftime("%Y-%m-%d"), request.form['goal'],
+                      request.form['target_date'], 'In Progress'))
+        conn.commit()
+        conn.close()
         flash('Health goal added successfully!', 'success')
         return redirect(url_for('health_goals_route'))
+    
+    conn = get_db_connection()
+    health_goals = conn.execute("SELECT * FROM health_goals ORDER BY date DESC").fetchall()
+    conn.close()
     return render_template('health_goals.html', health_goals=health_goals)
 
 @app.route('/health_game')
@@ -94,11 +115,9 @@ def get_question():
     question = random.choice(questions)
     return jsonify(question)
 
-
 @app.route('/record')
 def records():
     return render_template('records.html')
-# If running the app directly with Gunicorn, the `__name__` will be `"__main__"`
+
 if __name__ == '__main__':
-    # For production, use Gunicorn to serve the app
     app.run(host='0.0.0.0', port=8000)
