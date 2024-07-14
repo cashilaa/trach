@@ -1,49 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Game</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
-    <h1>Health Quiz Game</h1>
-    <div id="question-container">
-        <p id="question"></p>
-        <div id="options"></div>
+{% extends "base.html" %}
+
+{% block title %}Health Game{% endblock %}
+
+{% block content %}
+    <h1>Health Trivia Game</h1>
+    <p>Test your health knowledge with this trivia game!</p>
+    
+    <div id="quiz-container">
+        <div id="question-container" style="display: none;">
+            <h3 id="question-text"></h3>
+            <div id="options-container"></div>
+        </div>
+        <button id="start-btn" class="btn">Start Quiz</button>
     </div>
-    <button id="next-question">Next Question</button>
+
+    <div id="results" style="display: none;">
+        <h2>Your Score: <span id="score"></span></h2>
+        <button id="restart-btn" class="btn">Restart Quiz</button>
+    </div>
 
     <script>
-        function loadQuestion() {
-            $.get('/get_question', function(data) {
-                $('#question').text(data.question);
-                $('#options').empty();
-                data.options.forEach(function(option) {
-                    $('#options').append(`<button class="option">${option}</button>`);
-                });
+        const questions = {{ questions|tojson }};
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            shuffleArray(questions);
+            document.getElementById('start-btn').style.display = 'none';
+            document.getElementById('question-container').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showResults();
+                return;
+            }
+
+            const question = questions[currentQuestionIndex];
+            document.getElementById('question-text').textContent = question.question;
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.classList.add('option-btn');
+                button.addEventListener('click', () => selectAnswer(option));
+                optionsContainer.appendChild(button);
             });
         }
 
-        $(document).ready(function() {
-            loadQuestion();
+        function selectAnswer(selectedOption) {
+            const question = questions[currentQuestionIndex];
+            if (selectedOption === question.answer) {
+                score++;
+            }
+            currentQuestionIndex++;
+            showQuestion();
+        }
 
-            $('#next-question').click(loadQuestion);
+        function showResults() {
+            document.getElementById('question-container').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('score').textContent = `${score} out of ${questions.length}`;
+        }
 
-            $(document).on('click', '.option', function() {
-                $('.option').prop('disabled', true);
-                if ($(this).text() === $('#question').data('answer')) {
-                    $(this).css('background-color', 'black');
-                } else {
-                    $(this).css('background-color', 'blue');
-                    $('.option').each(function() {
-                        if ($(this).text() === $('#question').data('answer')) {
-                            $(this).css('background-color', 'blue');
-                        }
-                    });
-                }
-            });
-        });
+        document.getElementById('start-btn').addEventListener('click', startQuiz);
+        document.getElementById('restart-btn').addEventListener('click', startQuiz);
     </script>
-</body>
-</html>
+{% endblock %}
