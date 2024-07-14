@@ -115,3 +115,23 @@ th {
     color: white;
     border-radius: 5px;
 }
+
+.guideline-content {
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+.guideline-content h3 {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.guideline-content ul {
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.guideline-content li {
+    margin-bottom: 5px;
+}
